@@ -1,0 +1,19 @@
+---
+import Base from '../layouts/Base.astro';
+import PageStickers from '../components/PageStickers.astro';
+---
+
+<Base title="Lost — Barkha Dhamija" description="This page wandered off for chai." noindex>
+  <section class="wrap lost has-stickers">
+    <PageStickers section="lost" />
+    <p class="mono muted">Error 404</p>
+    <h1 class="lost-code" aria-label="404">
+      <span aria-hidden="true">4</span><span class="lost-cup" aria-hidden="true"><span></span></span><span aria-hidden="true">4</span>
+    </h1>
+    <p class="lost-text">This page wandered off for <span class="hl">chai</span>. It’ll be back. Probably.</p>
+    <div class="row" style="justify-content: center">
+      <a href="/" class="btn btn-ink">Take me home</a>
+      <button type="button" class="btn btn-line" data-open-terminal>Ask the terminal</button>
+    </div>
+  </section>
+</Base>

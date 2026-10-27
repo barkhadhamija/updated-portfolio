@@ -1,0 +1,546 @@
+---
+import Base from '../layouts/Base.astro';
+import { ready, projects, desk, greetings, currently, photos, timeline, reading, tracks, stickers, person, tickerWords, quickFacts } from '../data/site';
+import PageStickers from '../components/PageStickers.astro';
+
+const [elira, booth, pixel, distroq, halfca, novus] = projects;
+const halfcaLive = halfca.links?.[0]?.href ?? '#';
+const novusLive = novus.links?.[0]?.href ?? '#';
+const pixelLive = pixel.links?.find((l) => l.label === 'Live')?.href ?? '#';
+const filters = [
+  { id: 'natural', label: 'Natural' },
+  { id: 'espresso', label: 'Espresso' },
+  { id: 'mono', label: 'Mono' },
+  { id: 'pop', label: 'Pop' },
+];
+const pad = (n: number) => String(n).padStart(2, '0');
+/** A stable, fake 7-character commit hash for each timeline entry. */
+const commitHash = (text: string) => {
+  let h = 2166136261;
+  for (const c of text) h = Math.imul(h ^ c.charCodeAt(0), 16777619);
+  return (h >>> 0).toString(16).padStart(8, '0').slice(0, 7);
+};
+---
+
+<Base>
+  <!-- ============ hero: hi + my desk ============ -->
+  <section id="top" class="wrap hero">
+    <div class="hero-copy">
+      <p class="mono muted" data-reveal>Developer + designer / New Delhi / B.Tech CSE ’28</p>
+      <h1 class="hero-title" data-letters>
+        <button type="button" class="greet" data-greet data-greetings={JSON.stringify(greetings)} data-cursor="click me" aria-label="Change the greeting">{greetings[0]}</button>, I’m <span class="hl">Barkha.</span>
+      </h1>
+      <p class="hero-intro" data-reveal>
+        I design things in Figma, then I actually build them. Mostly Flutter apps, React sites and design systems, with Go
+        doing the heavy lifting on the backend and a LeetCode tab always open. Powered by gilmore girls and slightly too much coffee.
+      </p>
+      <div class="row" data-reveal>
+        <a href="#work" class="btn btn-ink">See what I’ve made</a>
+        <a href="#about" class="btn btn-line">More about me</a>
+      </div>
+      <dl class="facts" aria-label="Quick facts" data-reveal>
+        {
+          quickFacts.map(([k, v]) => (
+            <div class="fact">
+              <dt class="mono">{k}</dt>
+              <dd>{v}</dd>
+            </div>
+          ))
+        }
+      </dl>
+      <p class="mono muted" data-reveal>Psst: click “<span data-greet-echo>{greetings[0]}</span>”.</p>
+    </div>
+
+    <div class="hero-desk">
+      <div class="desk" data-desk>
+        {
+          desk.map((d) => (
+            <button
+              type="button"
+              class={`desk-item desk-${d.kind}`}
+              data-id={d.id}
+              data-cursor={d.kind === 'cup' ? 'sip' : 'drag'}
+              aria-label={`${d.label}. Arrow keys move it.`}
+              style={`left:${d.x}%;top:${d.y}%;--rot:${d.rot}deg;--delay:${(d.x * 37) % 4000}ms;${d.tone ? `--tone:${d.tone};` : ''}${d.bg ? `--sbg:${d.bg};--sfg:${d.fg};` : ''}`}
+            >
+              {d.kind === 'polaroid' && (
+                <span class="polaroid">
+                  <span class="polaroid-img">
+                    {d.image && <img src={d.image} alt="" draggable="false" loading="lazy" decoding="async" />}
+                  </span>
+                  <span class="serif polaroid-note">{d.text}</span>
+                </span>
+              )}
+              {d.kind === 'cup' && (
+                <span class="cup">
+                  <span class="cup-handle" />
+                  <span class="cup-rim">
+                    <span class="cup-coffee" data-cup-level />
+                  </span>
+                </span>
+              )}
+              {d.kind === 'note' && (
+                <span class="note">
+                  <span class="note-tape" />
+                  <span class="mono note-text">{d.text}</span>
+                </span>
+              )}
+              {d.kind === 'ticket' && (
+                <span class="ticket">
+                  <span class="ticket-main">
+                    <span class="mono ticket-small">Admit one</span>
+                    <span class="ticket-text">{d.text}</span>
+                  </span>
+                  <span class="mono ticket-stub">ELIRA</span>
+                </span>
+              )}
+              {d.kind === 'sticker' && <span class="mono sticker">{d.text}</span>}
+              {d.kind === 'badge' && (
+                <span class="badge">
+                  <span class="mono">{d.text}</span>
+                </span>
+              )}
+            </button>
+          ))
+        }
+      </div>
+      <div class="desk-foot mono muted">
+        <span aria-live="polite" data-desk-hint>My desk. Drag and flick anything. Tap the coffee.</span>
+        <button type="button" class="mono link-btn" data-desk-tidy>Tidy up</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ticker ============ -->
+  <div class="ticker" data-ticker aria-hidden="true">
+    <div class="ticker-track" data-ticker-track>
+      {
+        [0, 1, 2].map(() => (
+          <span class="ticker-run">
+            {tickerWords.map((w) => (
+              <>
+                <span class="ticker-word">{w}</span>
+                <svg class="ticker-star" viewBox="0 0 100 100">
+                  <path d="M50 4l12 30 32 2-25 20 9 31-28-18-28 18 9-31L6 36l32-2z" />
+                </svg>
+              </>
+            ))}
+          </span>
+        ))
+      }
+    </div>
+  </div>
+
+  <!-- ============ right now ============ -->
+  <section class="dark now" aria-labelledby="now-label">
+    <div class="wrap now-inner">
+      <p class="mono" id="now-label">Right now I’m</p>
+      <div class="tabs" role="radiogroup" aria-labelledby="now-label">
+        {
+          currently.map(([label], i) => (
+            <label class="tab">
+              <input type="radio" name="now" value={i} checked={i === 0} class="sr-only" />
+              <span>{label}</span>
+            </label>
+          ))
+        }
+      </div>
+      <div class="now-panels serif" aria-live="polite">
+        {
+          currently.map(([, text], i) => (
+            <p class="now-panel" data-panel={i}>
+              {text.includes('{cups}') ? (
+                <>
+                  {text.split('{cups}')[0]}
+                  <span data-cups>2</span>
+                  {text.split('{cups}')[1]}
+                </>
+              ) : (
+                text
+              )}
+            </p>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ things I've made ============ -->
+  <section id="work" class="wrap section has-stickers">
+    <PageStickers section="work" />
+    <div class="section-head">
+      <h2 class="h2" data-split>Things I’ve <span class="serif">made.</span></h2>
+      <p class="lede" data-reveal>Every card below works. Press, hold, toggle and poke at them{ready.caseStudies ? ', then read how I built each one' : ''}.</p>
+    </div>
+
+    <div class="work-group" data-reveal>
+      <h3 class="mono work-group-title">My own projects</h3>
+      <p class="mono muted">Built solo, from first sketch to deploy.</p>
+    </div>
+    <div class="work-grid">
+      <!-- ELIRA: hold to SOS -->
+      <article class="card card-dark" data-card="elira" data-reveal>
+        <div class="card-stage stage-dots-dark" data-sos>
+          <div class="phone">
+            <div class="phone-screen" data-sos-screen>
+              <div class="phone-top">
+                <span class="mono">ELIRA</span>
+                <span class="mono" data-sos-status>● Safe</span>
+              </div>
+              <p class="phone-greet">Hi, Barkha.<br />You’re all set.</p>
+              <button type="button" class="sos-btn" data-sos-btn data-cursor="hold" aria-describedby="sos-help">
+                <span class="sos-pulse" aria-hidden="true"></span>
+                <span class="sos-core" aria-hidden="true"></span>
+                <svg viewBox="0 0 100 100" class="sos-ring" aria-hidden="true">
+                  <circle cx="50" cy="50" r="44" class="sos-track"></circle>
+                  <circle cx="50" cy="50" r="44" class="sos-progress" data-sos-progress></circle>
+                </svg>
+                <span class="sos-label">SOS</span>
+              </button>
+              <p id="sos-help" class="mono phone-help" data-sos-help aria-live="polite">Press and hold for 1.5 seconds</p>
+            </div>
+          </div>
+          <button type="button" class="mono chip chip-light stage-corner" data-sos-reset hidden>Reset</button>
+        </div>
+        <div class="card-body">
+          <div class="card-meta mono"><span>{elira.type} · {elira.year}</span><span>Hold the button</span></div>
+          <h3 class="card-title">{elira.title}</h3>
+          <p class="card-text">{elira.summary}</p>
+          {elira.stack.length > 0 && <p class="mono card-stack">{elira.stack.join(' · ')}</p>}
+          {ready.caseStudies && <a href={`/work/${elira.slug}/`} class="text-link">How I built it →</a>}
+        </div>
+      </article>
+
+      <!-- Photobooth: filters + snap (+ real camera) -->
+      <article class="card" data-card="booth" data-reveal>
+        <div class="card-stage stage-mat booth" data-booth>
+          <div class="booth-scene" data-booth-scene>
+            <div class="scene" aria-hidden="true">
+              <span class="scene-floor"></span>
+              <span class="scene-sun"></span>
+              <span class="scene-body"></span>
+              <span class="scene-head"></span>
+              <span class="scene-hair"></span>
+            </div>
+            <video class="booth-video" data-booth-video playsinline muted></video>
+            <span class="mono booth-live" data-booth-live>● [Live camera]</span>
+            <span class="booth-count" data-booth-count aria-hidden="true"></span>
+            <span class="booth-flash" data-booth-flash aria-hidden="true"></span>
+          </div>
+          <div class="booth-bar">
+            <div class="filters" role="radiogroup" aria-label="Filter">
+              {
+                filters.map((f, i) => (
+                  <label class="pill">
+                    <input type="radio" name="booth-filter" value={f.id} checked={i === 0} class="sr-only" />
+                    <span>{f.label}</span>
+                  </label>
+                ))
+              }
+            </div>
+            <button type="button" class="btn btn-fill btn-sm" data-booth-snap data-cursor="snap">Snap</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-meta mono"><span>{booth.type} · {booth.year}</span><span>Pick a filter, snap</span></div>
+          <h3 class="card-title">{booth.title}</h3>
+          <p class="card-text">{booth.summary}</p>
+          <ol class="snaps" data-booth-strip aria-label="Your snaps"></ol>
+          <p class="mono muted booth-status" data-booth-status aria-live="polite"></p>
+          <div class="row">
+            <button type="button" class="mono chip" data-booth-cam>Use my real camera</button>
+          </div>
+          {booth.stack.length > 0 && <p class="mono card-stack">{booth.stack.join(' · ')}</p>}
+          {ready.caseStudies && <a href={`/work/${booth.slug}/`} class="text-link">How I built it →</a>}
+        </div>
+      </article>
+
+      <!-- Pixel: cull a mini batch -->
+      <article class="card" data-card="pixel" data-reveal>
+        <a href={pixelLive} class="card-stage stage-a3 site-preview" target="_blank" rel="noopener" data-cursor="visit" aria-label="Open the Pixel website (opens in a new tab)">
+          <span class="browser">
+            <span class="browser-bar">
+              <i></i><i></i><i></i>
+              <span class="mono browser-url">photo-culler-sigma.vercel.app</span>
+              <span class="mono browser-open">Visit ↗</span>
+            </span>
+            <span class="browser-view">
+              <img src="/projects/pixel.webp" alt="The Pixel landing page" width="1100" height="909" loading="lazy" decoding="async" />
+            </span>
+          </span>
+        </a>
+        <div class="card-body">
+          <div class="card-meta mono"><span>{pixel.type} · {pixel.year}</span><span>Hover to scroll, click to visit</span></div>
+          <h3 class="card-title">{pixel.title}</h3>
+          <p class="card-text">{pixel.summary}</p>
+          {pixel.stack.length > 0 && <p class="mono card-stack">{pixel.stack.join(' · ')}</p>}
+          <div class="row">
+            {ready.caseStudies && <a href={`/work/${pixel.slug}/`} class="text-link">How I built it →</a>}
+            {pixel.links?.map((l) => <a href={l.href} class="mono chip" target="_blank" rel="noopener">{l.label} ↗</a>)}
+          </div>
+        </div>
+      </article>
+
+      <!-- DistroQ: a live queue -->
+      <article class="card" data-card="distroq" data-reveal>
+        <div class="card-stage distroq" data-distroq>
+          <div class="dq-flow">
+            <div class="dq-queue" data-dq-queue aria-live="off" aria-label="Job queue"></div>
+            <div class="dq-workers">
+              {
+                [1, 2, 3].map((n) => (
+                  <button type="button" class="dq-worker" data-dq-worker={n} data-cursor="kill" aria-pressed="false" aria-label={`Worker ${n}. Click to kill or restart it.`}>
+                    <span class="mono dq-name">W{n}</span>
+                    <span class="dq-track"><i data-dq-bar></i></span>
+                    <span class="mono dq-state" data-dq-state>idle</span>
+                  </button>
+                ))
+              }
+            </div>
+          </div>
+          <p class="mono dq-status" data-dq-status aria-live="polite"></p>
+          <div class="dq-bar-row">
+            <button type="button" class="btn btn-ink btn-sm" data-dq-add data-cursor="enqueue">Enqueue 12 jobs</button>
+            <p class="mono dq-counts">
+              done <b data-dq-done>0</b> · retried <b class="dq-retry" data-dq-retried>0</b> · dead <b class="dq-dead" data-dq-dlq>0</b>
+            </p>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-meta mono"><span>{distroq.type} · {distroq.year}</span><span>Click a worker to kill it</span></div>
+          <h3 class="card-title">{distroq.title}</h3>
+          <p class="card-text">{distroq.summary}</p>
+          {distroq.stack.length > 0 && <p class="mono card-stack">{distroq.stack.join(' · ')}</p>}
+          <div class="row">
+            {ready.caseStudies && <a href={`/work/${distroq.slug}/`} class="text-link">How I built it →</a>}
+            {distroq.links?.map((l) => <a href={l.href} class="mono chip" target="_blank" rel="noopener">{l.label} ↗</a>)}
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <div class="work-group" data-reveal>
+      <h3 class="mono work-group-title">Built at hackathons</h3>
+      <p class="mono muted">Team builds, shipped against the clock. Both took home a prize.</p>
+    </div>
+    <div class="work-grid">
+      <!-- Half CA: accept / reject / hold, or let Autopilot decide -->
+      <article class="card" data-card="halfca" data-reveal>
+        <a href={halfcaLive} class="card-stage stage-hc site-preview" target="_blank" rel="noopener" data-cursor="visit" aria-label="Open the Half CA website (opens in a new tab)">
+          <span class="browser">
+            <span class="browser-bar">
+              <i></i><i></i><i></i>
+              <span class="mono browser-url">halfca.akshatchowdhary.online</span>
+              <span class="mono browser-open">Visit ↗</span>
+            </span>
+            <span class="browser-view">
+              <img src="/projects/halfca.webp" alt="The Half CA landing page" width="1100" height="4140" loading="lazy" decoding="async" />
+            </span>
+          </span>
+        </a>
+        <div class="card-body">
+          <div class="card-meta mono"><span>{halfca.type}</span><span>Hover to scroll, click to visit</span></div>
+          <span class="mono card-tag">Hackathon · team build</span>
+          <h3 class="card-title">{halfca.title}</h3>
+          <p class="card-text">{halfca.summary}</p>
+          {halfca.stack.length > 0 && <p class="mono card-stack">{halfca.stack.join(' · ')}</p>}
+          <div class="row">
+            {ready.caseStudies && <a href={`/work/${halfca.slug}/`} class="text-link">How we built it →</a>}
+            {halfca.links?.map((l) => <a href={l.href} class="mono chip" target="_blank" rel="noopener">{l.label} ↗</a>)}
+          </div>
+        </div>
+      </article>
+
+      <!-- Novus: the live game in a browser frame -->
+      <article class="card" data-card="novus" data-reveal>
+        <a href={novusLive} class="card-stage stage-novus site-preview" target="_blank" rel="noopener" data-cursor="visit" aria-label="Open the Novus website (opens in a new tab)">
+          <span class="browser">
+            <span class="browser-bar">
+              <i></i><i></i><i></i>
+              <span class="mono browser-url">game.akshatchowdhary.online</span>
+              <span class="mono browser-open">Visit ↗</span>
+            </span>
+            <span class="browser-view">
+              <img src="/projects/novus.webp" alt="The Novus landing page" width="1100" height="7705" loading="lazy" decoding="async" />
+            </span>
+          </span>
+        </a>
+        <div class="card-body">
+          <div class="card-meta mono"><span>{novus.type}</span><span>Hover to scroll, click to visit</span></div>
+          <span class="mono card-tag">Hackathon · team build</span>
+          <h3 class="card-title">{novus.title}</h3>
+          <p class="card-text">{novus.summary}</p>
+          {novus.stack.length > 0 && <p class="mono card-stack">{novus.stack.join(' · ')}</p>}
+          <div class="row">
+            {ready.caseStudies && <a href={`/work/${novus.slug}/`} class="text-link">How we built it →</a>}
+            {novus.links?.map((l) => <a href={l.href} class="mono chip" target="_blank" rel="noopener">{l.label} ↗</a>)}
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ about ============ -->
+  <section id="about" class="wrap section about has-stickers">
+    <PageStickers section="about" />
+    <div class="about-photos">
+      <button type="button" class="photo-stack" data-photos data-cursor="shuffle" aria-label="Shuffle the photos">
+        {
+          photos.map((p, i) => (
+            <span class="photo" data-photo style={`--tone:${p.tone}`} data-depth={i}>
+              <span class="photo-img">
+                {p.image && <img src={p.image} alt="" draggable="false" loading="lazy" decoding="async" />}
+              </span>
+              <span class="serif photo-note">{p.note}</span>
+            </span>
+          ))
+        }
+      </button>
+      <p class="mono muted center">Tap the photos to shuffle</p>
+    </div>
+
+    <div>
+      <h2 class="h2" data-split>A bit <span class="serif">about</span> me.</h2>
+      <div class="about-text" data-reveal>
+        <p>
+          I’m a computer science student at USICT in New Delhi who can’t pick between designing and building, so I do
+          both. I like starting in Figma, getting the details right, and then making sure they survive all the way to
+          production. Behind the pixels it’s usually Go: queues, APIs and the bits that keep things up. And I keep my DSA
+          sharp with a LeetCode problem most days.
+        </p>
+      </div>
+      <div class="gitlog">
+        <p class="mono gitlog-cmd" aria-hidden="true"><span class="muted">$</span> git log --oneline barkha</p>
+        <ol class="timeline">
+          {
+            [...timeline].reverse().map((m, i) => (
+              <li data-reveal>
+                {m.detail ? (
+                  <details>
+                    <summary>
+                      <span class={`mono tl-hash${i === 0 ? ' is-head' : ''}`}>{i === 0 ? 'HEAD' : commitHash(m.title)}</span>
+                      <span class="tl-title"><span class="mono tl-type">{m.type}:</span> {m.title}</span>
+                      <span class="mono muted tl-date">{m.year}</span>
+                      <span class="tl-plus mono" aria-hidden="true">+</span>
+                    </summary>
+                    <p class="tl-detail">{m.detail}</p>
+                  </details>
+                ) : (
+                  <div class="tl-row">
+                    <span class={`mono tl-hash${i === 0 ? ' is-head' : ''}`}>{i === 0 ? 'HEAD' : commitHash(m.title)}</span>
+                    <span class="tl-title"><span class="mono tl-type">{m.type}:</span> {m.title}</span>
+                    <span class="mono muted tl-date">{m.year}</span>
+                  </div>
+                )}
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ on my desk ============ -->
+  <section id="desk" class="dark section-dark has-stickers">
+    <PageStickers section="desk" />
+    <div class="wrap">
+      <h2 class="h2 section-gap" data-split>On my <span class="serif">desk.</span></h2>
+      <div class="shelf">
+        <div class="panel" data-reveal data-reads>
+          <div class="panel-head mono">
+            <span>{reading.length > 1 ? 'Substack posts I keep rereading' : 'A Substack post I keep rereading'}</span>
+            {reading.length > 1 && <span aria-live="polite" data-reads-count>01 / {pad(reading.length)}</span>}
+          </div>
+          <div class="read-stack">
+            <span class="read-back read-back-2" aria-hidden="true"></span>
+            <span class="read-back read-back-1" aria-hidden="true"></span>
+            {
+              reading.map((r, i) => (
+                <article class="read-card" data-read={i} hidden={i !== 0}>
+                  <p class="mono">{r.publication}</p>
+                  <h3 class="read-title">{r.title}</h3>
+                  <blockquote class="serif read-quote">“{r.quote}”</blockquote>
+                  <a href={r.url} class="text-link" target="_blank" rel="noopener noreferrer">
+                    Read it ↗
+                  </a>
+                </article>
+              ))
+            }
+          </div>
+          {
+            reading.length > 1 && (
+              <div class="row">
+                <button type="button" class="btn btn-line-light" data-reads-prev>← Back</button>
+                <button type="button" class="btn btn-light" data-reads-next>Next post →</button>
+              </div>
+            )
+          }
+        </div>
+
+        <div class="panel record" data-reveal data-record data-tracks={JSON.stringify(tracks)}>
+          <p class="mono panel-head">On repeat while I work</p>
+          <div class="turntable">
+            <div class="vinyl" aria-hidden="true">
+              <div class="vinyl-label" data-track-color><span></span></div>
+            </div>
+            <span class="tonearm" aria-hidden="true"></span>
+          </div>
+          <div class="record-bar">
+            <div aria-live="polite">
+              <p class="track-song" data-track-song>{tracks[0].song}</p>
+              <p class="mono muted" data-track-artist>{tracks[0].artist}</p>
+            </div>
+            <div class="row">
+              <label class="btn btn-fill play-btn" data-cursor="play">
+                <input type="checkbox" class="sr-only" data-play />
+                <span class="play-off">Play</span>
+                <span class="play-on">Pause</span>
+              </label>
+              <button type="button" class="btn btn-line-light" data-track-next>Next track</button>
+            </div>
+          </div>
+          <a href={`https://music.apple.com/us/song/${tracks[0].appleId}`} class="mono muted record-credit" target="_blank" rel="noopener" data-track-link style={tracks[0].src.startsWith('https://') ? undefined : 'visibility:hidden'}>
+            30-second previews from Apple Music ↗
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ say hi ============ -->
+  <section id="hi" class="hi has-stickers">
+    <PageStickers section="hi" />
+    <div class="wrap hi-grid">
+      <div>
+        <h2 class="mega" data-split>Say <span class="serif">hi.</span></h2>
+        <p class="hi-text" data-reveal>
+          Internships, freelance, a hackathon team, or just a good Substack recommendation. My inbox is open.
+        </p>
+        <div class="row" data-reveal>
+          <button type="button" class="btn btn-ink btn-lg" data-copy-email data-email={person.email} data-cursor="copy">Copy my email</button>
+          {person.socials.map((s) => <a href={s.href} class="btn btn-line btn-lg">{s.label}</a>)}
+        </div>
+      </div>
+
+      <div data-wall data-reveal>
+        <p class="mono wall-label">Or leave a sticker on my wall</p>
+        <div class="row wall-picks">
+          {
+            stickers.map((s) => (
+              <button type="button" class="wall-pick" style={`--sbg:${s.bg}`} data-sticker={s.text} data-cursor="stick">
+                {s.text}
+              </button>
+            ))
+          }
+        </div>
+        <div class="wall" data-wall-board>
+          <p class="mono wall-empty" data-wall-empty>Empty wall. Be the first.</p>
+        </div>
+        <div class="wall-foot">
+          <p class="mono wall-label" aria-live="polite" data-wall-count>No stickers yet</p>
+          <button type="button" class="mono link-btn" data-wall-clear>Clear the wall</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

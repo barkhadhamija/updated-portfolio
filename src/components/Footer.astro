@@ -1,0 +1,25 @@
+---
+import { person, ready } from '../data/site';
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer dark">
+  <div class="wrap footer-inner">
+    <p class="mono">Made with chai in New Delhi · <span data-clock>--:--</span> IST</p>
+    <p class="mono">Coffee today: <span data-cups>2</span> cups</p>
+    <div class="footer-controls">
+      <button class="mono link-btn" data-open-terminal>Terminal <kbd>`</kbd></button>
+      <button class="mono link-btn" data-motion-toggle>Motion: on</button>
+      {
+        ready.secret && (
+          <>
+            <button class="mono link-btn" data-brew>Brewed in New Delhi</button>
+            <a href="/secret/" class="mono link-btn secret-link" data-secret hidden>Secret page unlocked →</a>
+            <span class="sr-only" aria-live="polite" data-brew-status></span>
+          </>
+        )
+      }
+    </div>
+    <p class="mono">© {year} {person.name}</p>
+  </div>
+</footer>

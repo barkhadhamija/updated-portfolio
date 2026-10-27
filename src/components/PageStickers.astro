@@ -1,0 +1,37 @@
+---
+// Stickers scattered over a section. Drag them anywhere; they wobble when you scroll (toys/stickers.ts).
+import { pageStickers } from '../data/site';
+
+interface Props {
+  section: string;
+}
+const list = pageStickers.filter((s) => s.section === Astro.props.section);
+---
+
+{
+  list.map((s) => (
+    <button
+      type="button"
+      class={`page-sticker shape-${s.shape}`}
+      data-page-sticker
+      data-cursor="drag"
+      aria-label={`Sticker${s.text ? `: ${s.text.replace('\n', ' ')}` : ''}. Drag it, or use the arrow keys.`}
+      style={`top:${s.top};left:${s.left};--rot:${s.rot}deg;--sbg:${s.bg};--sfg:${s.fg}`}
+    >
+      {s.shape === 'star' && (
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <path d="M50 4l12 30 32 2-25 20 9 31-28-18-28 18 9-31L6 36l32-2z" />
+        </svg>
+      )}
+      {s.shape === 'smile' && (
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <circle cx="50" cy="50" r="46" />
+          <circle cx="36" cy="40" r="5" class="ink" />
+          <circle cx="64" cy="40" r="5" class="ink" />
+          <path d="M32 60q18 18 36 0" class="line" />
+        </svg>
+      )}
+      {(s.shape === 'pill' || s.shape === 'circle') && <span class="mono">{s.text}</span>}
+    </button>
+  ))
+}

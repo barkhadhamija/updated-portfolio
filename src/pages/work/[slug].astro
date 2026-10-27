@@ -1,0 +1,67 @@
+---
+import Base from '../../layouts/Base.astro';
+import { projects, ready } from '../../data/site';
+
+// hidden until they're written: no pages are built while ready.caseStudies is false
+export function getStaticPaths() {
+  if (!ready.caseStudies) return [];
+  return projects.map((project, i) => ({
+    params: { slug: project.slug },
+    props: { project, next: projects[(i + 1) % projects.length] },
+  }));
+}
+
+const { project, next } = Astro.props;
+---
+
+<Base title={`${project.title} — Barkha Dhamija`} description={project.summary}>
+  <article class="container case">
+    <a href="/#work" class="btn-text back">← All work</a>
+    <p class="label" data-reveal>{project.type} · {project.year}</p>
+    <h1 class="display" data-split>{project.title}</h1>
+    <p class="case-summary" data-reveal>{project.summary}</p>
+
+    <dl class="case-meta" data-reveal>
+      <div>
+        <dt class="label">Role</dt>
+        <dd>[Your role]</dd>
+      </div>
+      <div>
+        <dt class="label">Stack</dt>
+        <dd class="work-stack">{project.stack.map((s) => <span class="tag">{s}</span>)}</dd>
+      </div>
+      <div>
+        <dt class="label">Links</dt>
+        <dd class="row">
+          {
+            project.links?.length
+              ? project.links.map((l) => <a href={l.href} class="inline-link" target="_blank" rel="noopener">{l.label} ↗</a>)
+              : <span>[Live site], [Code]</span>
+          }
+        </dd>
+      </div>
+    </dl>
+
+    <div class="case-cover" style={`--tone:${project.tone}`} data-reveal>
+      <span class="label">[Cover screenshot]</span>
+    </div>
+
+    <section class="case-block" data-reveal>
+      <h2 class="label">The problem</h2>
+      <p>[What problem this solved, and for whom. Two or three sentences.]</p>
+    </section>
+    <section class="case-block" data-reveal>
+      <h2 class="label">What I built</h2>
+      <p>[The interesting decisions: architecture, design, the hard part and how you got past it.]</p>
+    </section>
+    <section class="case-block" data-reveal>
+      <h2 class="label">What I learned</h2>
+      <p>[One honest takeaway. Results or numbers go here if you have them.]</p>
+    </section>
+
+    <a href={`/work/${next.slug}/`} class="next-project">
+      <span class="label">Next project</span>
+      <span class="h2">{next.title} →</span>
+    </a>
+  </article>
+</Base>

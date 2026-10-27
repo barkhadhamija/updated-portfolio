@@ -1,0 +1,13 @@
+<dialog id="terminal" class="terminal" aria-label="Terminal">
+  <div class="terminal-bar">
+    <span class="label">barkha@delhi: ~</span>
+    <button class="btn-text" data-close-terminal>Close</button>
+  </div>
+  <div class="terminal-out" data-terminal-out aria-live="polite">
+    <p>Welcome. Type <b>help</b> to see what works.</p>
+  </div>
+  <form class="terminal-form" data-terminal-form>
+    <label for="terminal-input" class="terminal-prompt">$</label>
+    <input id="terminal-input" name="cmd" autocomplete="off" spellcheck="false" autocapitalize="off" />
+  </form>
+</dialog>
