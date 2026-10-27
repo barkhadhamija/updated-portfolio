@@ -3,10 +3,10 @@
 Everything that was hidden to ship v1. Nothing here is broken on the live site; each item is just switched off
 until it's written.
 
-## Before you deploy
+## Address
 
-- [ ] **Your real domain** in `astro.config.mjs` (`site: 'https://your-domain.com'`). Link previews on LinkedIn,
-      WhatsApp and X use it to find the preview image, and the canonical URL comes from it.
+- [x] Live at **https://barkhadhamija.vercel.app** (`site` in `astro.config.mjs`). If you rename it in Vercel or buy
+      a domain later, update that line too, or link previews will point at the old address.
 
 ## Hidden pages
 
@@ -31,8 +31,9 @@ until it's written.
 - [ ] **About, second paragraph** (`src/pages/index.astro`, after the first About paragraph): removed. It was
       "[A line about what got you into this: a first project, a person, a moment.] Outside of code I
       [your hobbies], and I'm usually holding a coffee."
-- [ ] **Desk Polaroids** ("me, probably mid-sip" and "3 a.m., still shipping"): no photo yet, so they show a plain
-      coloured square. Add `image: '/photos/….jpeg'` to the `me` and `hack` items in `desk`.
+- [ ] **Desk Polaroids** ("me, probably mid-sip" and "3 a.m., still shipping"): showing Gilmore Girls-themed
+      placeholder drawings (`public/photos/placeholder-lukes.svg`, `placeholder-3am.svg`). Swap the `image` on the
+      `me` and `hack` items in `desk` for real photos, then delete the two placeholder files.
 
 ## Nice to have
 

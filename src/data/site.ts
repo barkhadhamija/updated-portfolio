@@ -125,8 +125,8 @@ export type DeskItem = {
 };
 
 export const desk: DeskItem[] = [
-  { id: 'me', kind: 'polaroid', x: 5, y: 6, rot: -6, tone: '#2E5BFF', caption: '[your photo]', text: 'me, probably mid-sip', label: 'Polaroid of me' },
-  { id: 'hack', kind: 'polaroid', x: 44, y: 3, rot: 5, tone: '#B69CFF', caption: '[hackathon photo]', text: '3 a.m., still shipping', label: 'Polaroid from a hackathon' },
+  { id: 'me', kind: 'polaroid', x: 5, y: 6, rot: -6, tone: '#2E5BFF', image: '/photos/placeholder-lukes.svg', caption: '[your photo]', text: 'me, probably mid-sip', label: 'Polaroid of me' },
+  { id: 'hack', kind: 'polaroid', x: 44, y: 3, rot: 5, tone: '#B69CFF', image: '/photos/placeholder-3am.svg', caption: '[hackathon photo]', text: '3 a.m., still shipping', label: 'Polaroid from a hackathon' },
   { id: 'cup', kind: 'cup', x: 62, y: 46, rot: 0, label: 'Coffee cup. Tap to take a sip' },
   { id: 'todo', kind: 'note', x: 5, y: 56, rot: -4, tone: 'var(--yellow)', text: 'todo:\nfinish portfolio\n(stop adding toys)', label: 'Sticky note: to do' },
   { id: 'ticket', kind: 'ticket', x: 30, y: 80, rot: 3, text: 'TOP 30 · ECLIPSE 6.0', label: 'Eclipse 6.0 ticket' },
@@ -135,7 +135,7 @@ export const desk: DeskItem[] = [
   { id: 'go', kind: 'sticker', x: 50, y: 40, rot: 6, text: 'Go', bg: '#00ADD8', fg: '#111111', label: 'Go sticker' },
   { id: 'react', kind: 'sticker', x: 72, y: 30, rot: -4, text: 'React', bg: '#FFFFFF', fg: '#111111', label: 'React sticker' },
   { id: 'acmw', kind: 'badge', x: 72, y: 5, rot: 12, text: 'ACM-W\nfounder', label: 'ACM-W founder badge' },
-  { id: 'chai', kind: 'note', x: 66, y: 74, rot: 6, tone: '#C6FF3D', text: 'chai > sleep', label: 'Sticky note: coffee over sleep' },
+  { id: 'coffee-note', kind: 'note', x: 66, y: 74, rot: 6, tone: '#C6FF3D', text: 'coffee > sleep', label: 'Sticky note: coffee over sleep' },
 ];
 
 export const greetings = ['Hi', 'Namaste', 'Hola', 'Hello', 'Oye'];
@@ -204,13 +204,13 @@ export const tracks: Track[] = [
 export const stickers = [
   { text: 'hi!', bg: '#A6F0CF' },
   { text: 'cool work', bg: '#C6FF3D' },
-  { text: 'more chai', bg: '#FF4FA3' },
+  { text: 'more coffee', bg: '#FF4FA3' },
   { text: 'let’s build', bg: '#B69CFF' },
   { text: 'hire her', bg: '#FFFFFF' },
 ];
 
 /** The moving band between sections. */
-export const tickerWords = ['building', 'sipping', 'shipping', 'designing in Figma', 'Go', 'goroutines', 'LeetCode daily', 'Flutter', 'React', 'chai > sleep', 'open to work'];
+export const tickerWords = ['building', 'sipping', 'shipping', 'designing in Figma', 'Go', 'goroutines', 'LeetCode daily', 'Flutter', 'React', 'coffee > sleep', 'open to work'];
 
 /** Stickers scattered down the page. Drag them anywhere; they wobble when you scroll. */
 export const pageStickers = [
