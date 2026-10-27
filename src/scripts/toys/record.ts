@@ -12,19 +12,41 @@ export function init(panel: HTMLElement) {
   const link = panel.querySelector<HTMLAnchorElement>('[data-track-link]');
   const audio = new Audio();
   audio.preload = 'none';
-  const played: Track[] = [];
+  // one shuffled "bag" per language: every song in it plays once before any song repeats
+  const bags = new Map<Track['lang'], Track[]>();
+  const lastOf = new Map<Track['lang'], Track>();
 
-  // the next song is from the other language, and not one you just heard
-  function pick(): Track {
-    const last = played[played.length - 1];
-    const pool = tracks.filter((t) => !last || t.lang !== last.lang);
-    const fresh = pool.filter((t) => !played.slice(-3).includes(t));
-    const from = fresh.length ? fresh : pool.length ? pool : tracks;
-    return from[Math.floor(Math.random() * from.length)];
+  function shuffled(list: Track[]) {
+    const out = [...list];
+    for (let i = out.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [out[i], out[j]] = [out[j], out[i]];
+    }
+    return out;
+  }
+
+  function draw(lang: Track['lang']): Track {
+    let bag = bags.get(lang) ?? [];
+    if (!bag.length) {
+      bag = shuffled(tracks.filter((t) => t.lang === lang));
+      // a fresh bag never starts with the song that ended the last one
+      if (bag.length > 1 && bag[0] === lastOf.get(lang)) bag.push(bag.shift()!);
+      bags.set(lang, bag);
+    }
+    const t = bag.shift()!;
+    lastOf.set(lang, t);
+    return t;
+  }
+
+  // alternate languages: the next song is always from the other one
+  function pick(prev?: Track): Track {
+    const langs = [...new Set(tracks.map((t) => t.lang))];
+    const others = langs.filter((l) => l !== prev?.lang);
+    const pool = others.length ? others : langs;
+    return draw(pool[Math.floor(Math.random() * pool.length)]);
   }
 
   let current = pick();
-  played.push(current);
 
   function show() {
     if (song) song.textContent = current.song;
@@ -46,8 +68,7 @@ export function init(panel: HTMLElement) {
   }
 
   function next() {
-    current = pick();
-    played.push(current);
+    current = pick(current);
     show();
     if (play) play.checked = true; // skipping a track starts it playing
     start();
