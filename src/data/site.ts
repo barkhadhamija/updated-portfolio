@@ -179,7 +179,7 @@ export const reading: Read[] = [
     publication: 'Love Letters to Literature',
     title: `You don't see things as they are, you see them as you are`,
     quote: 'What we notice, what we interpret, is always coloured by who we are at the moment',
-    url: 'https://substack.com/@sentimentalbeing/note/c-269001000?r=55na89&utm_medium=ios&utm_source=notes-share-action',
+    url: 'https://theebookclubx.substack.com/p/the-art-of-noticing?r=55na89&utm_medium=ios',
   },
 ];
 
