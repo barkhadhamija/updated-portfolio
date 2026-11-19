@@ -41,7 +41,7 @@ export const projects: Project[] = [
     title: 'ELIRA',
     year: '2025',
     type: 'Mobile app',
-    summary: 'A safety app: log in with your face, and one long press sends your location to the people you trust. Top 30 at Eclipse 6.0, Thapar.',
+    summary: 'A safety app: log in with your face, and one long press sends your location to the people you trust. Finalist at Eclipse 6.0, Thapar.',
     stack: ['Flutter', 'Dart', 'Go', 'Firebase', 'Riverpod'],
     tone: '#2E5BFF',
   },
@@ -63,7 +63,7 @@ export const projects: Project[] = [
     stack: ['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'Zustand'],
     tone: '#111111',
     links: [
-      { label: 'Live', href: 'https://photo-culler-sigma.vercel.app' },
+      { label: 'Live', href: 'https://pixel-by-barkha.vercel.app' },
       { label: 'GitHub', href: 'https://github.com/barkhadhamija/photo-culler' },
     ],
   },
@@ -129,7 +129,7 @@ export const desk: DeskItem[] = [
   { id: 'hack', kind: 'polaroid', x: 44, y: 3, rot: 5, tone: '#B69CFF', image: '/photos/placeholder-3am.svg', caption: '[hackathon photo]', text: '3 a.m., still shipping', label: 'Polaroid from a hackathon' },
   { id: 'cup', kind: 'cup', x: 62, y: 46, rot: 0, label: 'Coffee cup. Tap to take a sip' },
   { id: 'todo', kind: 'note', x: 5, y: 56, rot: -4, tone: 'var(--yellow)', text: 'todo:\nfinish portfolio\n(stop adding toys)', label: 'Sticky note: to do' },
-  { id: 'ticket', kind: 'ticket', x: 30, y: 80, rot: 3, text: 'TOP 30 · ECLIPSE 6.0', label: 'Eclipse 6.0 ticket' },
+  { id: 'ticket', kind: 'ticket', x: 30, y: 80, rot: 3, text: 'FINALIST · ECLIPSE 6.0', label: 'Eclipse 6.0 ticket' },
   { id: 'flutter', kind: 'sticker', x: 40, y: 52, rot: -10, text: 'Flutter', bg: '#111111', fg: '#FAFAF7', label: 'Flutter sticker' },
   { id: 'figma', kind: 'sticker', x: 30, y: 37, rot: 8, text: 'Figma', bg: '#FF4FA3', fg: '#111111', label: 'Figma sticker' },
   { id: 'go', kind: 'sticker', x: 50, y: 40, rot: 6, text: 'Go', bg: '#00ADD8', fg: '#111111', label: 'Go sticker' },
@@ -160,7 +160,7 @@ export const photos: { tone: string; caption: string; note: string; image?: stri
 /** The About section shows this as a `git log`, newest first. `type` is the commit prefix. */
 export const timeline: { type: string; year: string; title: string; detail?: string }[] = [
   { type: 'init', year: '2024', title: 'Started B.Tech CSE at USICT, GGSIPU', detail: 'Class of 2028. Coursework so far: DSA, OOP, operating systems, networks, distributed systems and web development.' },
-  { type: 'release', year: '2025', title: 'Top 30 at Eclipse 6.0 with ELIRA', detail: 'A safety app built at Thapar’s hackathon: Flutter client, Go backend, real-time Firestore sync across 10+ screens.' },
+  { type: 'release', year: '2025', title: 'Finalist at Eclipse 6.0 with ELIRA', detail: 'A safety app built at Thapar’s hackathon: Flutter client, Go backend, real-time Firestore sync across 10+ screens.' },
   { type: 'feat', year: 'Nov 2025', title: 'Web Development Lead, TechSpace', detail: 'Led end-to-end React development of the official website for a 500+ member tech society.' },
   { type: 'feat', year: 'Jan 2026', title: 'Founded the ACM-W chapter at USICT', detail: 'Setting up the university’s first ACM-W chapter, for 200+ women in tech.' },
   { type: 'release', year: '2026', title: '1st place at the USAR hackathon with Novus, won ₹20,000', detail: 'We built Novus, a game that teaches how money and markets work: make the call, live with it, and get scored on your thinking, not your luck.' },
